@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隨機便當決定機</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        p.subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: none;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        textarea:focus {
+            border-color: #ff6b6b;
+            outline: none;
+        }
+        button {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #ff5252;
+        }
+        #result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #fff9f9;
+            border: 2px dashed #ff6b6b;
+            border-radius: 8px;
+            display: none;
+        }
+        #result-title {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        #result-text {
+            font-size: 28px;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🍱 隨機便當決定機</h1>
+        <p class="subtitle">選擇障礙救星！一行輸入一個選項：</p>
+        
+        <textarea id="menu-input">排骨飯
+雞腿飯
+牛肉麵
+義大利麵
+水餃
+健康餐盒
+滷肉飯
+蛋包飯</textarea>
+        
+        <button id="pick-btn" onclick="pickLunch()">幫我決定吃什麼！</button>
+
+        <div id="result-box">
+            <div id="result-title">今天決定就是它了！</div>
+            <div id="result-text">---</div>
+        </div>
+    </div>
+
+    <script>
+        let isRunning = false; // 防止重複點擊卡住
+
+        function pickLunch() {
+            if (isRunning) return; // 如果正在抽籤，就先擋掉
+            
+            const inputVal = document.getElementById('menu-input').value;
+            const items = inputVal.split('\n').map(item => item.trim()).filter(item => item !== "");
+            
+            if (items.length === 0) {
+                alert("請至少輸入一個選項！");
+                return;
+            }
+
+            isRunning = true;
+            const btn = document.getElementById('pick-btn');
+            btn.innerText = "抽籤中...";
+            btn.style.backgroundColor = "#ccc";
+
+            const resultBox = document.getElementById('result-box');
+            const resultText = document.getElementById('result-text');
+            
+            resultBox.style.display = "block";
+            
+            let count = 0;
+            const interval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * items.length);
+                resultText.innerText = items[randomIndex];
+                count++;
+                
+                // 跑動 15 次後停下來
+                if (count > 15) {
+                    clearInterval(interval);
+                    const finalIndex = Math.floor(Math.random() * items.length);
+                    resultText.innerText = `🎉 ${items[finalIndex]} 🎉`;
+                    
+                    // 恢復按鈕狀態
+                    isRunning = false;
+                    btn.innerText = "幫我決定吃什麼！";
+                    btn.style.backgroundColor = "#ff6b6b";
+                }
+            }, 100);
+        }
+    </script>
+
+</body>
+</html>
